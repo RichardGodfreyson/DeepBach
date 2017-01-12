@@ -507,7 +507,7 @@ def _merge_probas_canon(proba_sop_split, proba_bass_split, interval, diatonic_no
                         #                                         diatonic_note_names2indexes[BASS][dnn_bass][
                         #                                             p_bass_index]
                         #                                         ]}
-                        #                                )
+                        #                               )
                         # else:
                         merge_probas.append(p_sop * p_bass)
 
