@@ -188,9 +188,9 @@ def parallel_gibbs(models=None, melody=None, chorale_metas=None, sequence_length
     samples from models in model_base_name
     """
 
-    X, X_metadatas, num_voices, index2notes, note2indexes, metadatas = pickle.load(open(pickled_dataset, 'rb'))
+    X, X_metadatas, voices_ids, index2notes, note2indexes, metadatas = pickle.load(open(pickled_dataset, 'rb'))
     num_pitches = list(map(len, index2notes))
-
+    num_voices = len(voices_ids)
     # load models if not
     if models is None:
         for expert_index in range(num_voices):
@@ -344,7 +344,7 @@ def canon(models=None, chorale_metas=None, sequence_length=50, num_iterations=10
           model_base_name='models/raw_dataset/tmp/',
           temperature=1., batch_size_per_voice=16,
           pickled_dataset=BACH_DATASET,
-          intervals=[7], delays=[16],
+          intervals=[7], delays=[32],
           ):
     """
     samples from models in model_base_name
@@ -492,23 +492,10 @@ def _merge_probas_canon(proba_sop_split, proba_bass_split, interval, diatonic_no
         for dnn_bass in proba_bass_split:
             # when identical notes up to transformation
             if dnn_sop == dnn_bass + interval or dnn_sop == dnn_bass == -1:
-
                 # multiply all probas
                 for p_sop_index, p_sop in enumerate(proba_sop_split[dnn_sop]):
                     for p_bass_index, p_bass in enumerate(proba_bass_split[dnn_bass]):
                         # todo other combination than multiplication
-
-                        # # todo TEST reduce slur symbol proba
-                        # if dnn_sop == dnn_bass == -1:
-                        #     merge_probas.append(p_sop * p_bass / 50)
-                        #
-                        #     # create table or index to pitches
-                        #     index_merge2pitches.update({index: [diatonic_note_names2indexes[SOP][dnn_sop][p_sop_index],
-                        #                                         diatonic_note_names2indexes[BASS][dnn_bass][
-                        #                                             p_bass_index]
-                        #                                         ]}
-                        #                                )
-                        # else:
                         merge_probas.append(p_sop * p_bass)
 
                         # create table or index to pitches
@@ -825,9 +812,9 @@ def main():
         num_voices = NUM_VOICES
         melody = None
         # todo find a better way to set metadatas
-        chorale_metas = [np.concatenate((metas[:sequence_length], metas[:sequence_length])) for metas in
-                         X_metadatas[200]]
-        # chorale_metas = [metas.generate(sequence_length) for metas in metadatas]
+
+        # chorale_metas = [metas[:sequence_length] for metas in X_metadatas[11]]
+        chorale_metas = [metas.generate(sequence_length) for metas in metadatas]
 
     num_iterations = args.num_iterations // batch_size_per_voice // num_voices
     parallel = batch_size_per_voice > 1
