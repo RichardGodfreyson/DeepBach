@@ -138,8 +138,8 @@ class KeyMetadatas(Metadata):
         ka.windowSize = self.window_size
         res = ka.run()
 
-        measure_offset_map = chorale_with_measures.parts[0].measureOffsetMap()
-        length = int(chorale_with_measures.duration.quarterLength * SUBDIVISION)  # in 16th notes
+        measure_offset_map = chorale_with_measures.parts.measureOffsetMap()
+        length = int(chorale.duration.quarterLength * SUBDIVISION)  # in 16th notes
 
         key_signatures = np.zeros((length,))
 
@@ -148,6 +148,10 @@ class KeyMetadatas(Metadata):
             beat_index = time_index / SUBDIVISION
             if beat_index in measure_offset_map:
                 measure_index += 1
+                # todo remove this trick: problem with the last measures...
+                if measure_index == len(res):
+                    measure_index -= 1
+
             key_signatures[time_index] = self.get_index(res[measure_index].sharps)
         return np.array(key_signatures, dtype=np.int32)
 
