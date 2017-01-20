@@ -1,9 +1,9 @@
 """
 Metadata classes
 """
-from data_utils import SUBDIVISION
-from music21 import analysis
 import numpy as np
+from data_utils import SUBDIVISION
+from music21 import analysis, stream
 
 
 class Metadata:
@@ -80,6 +80,7 @@ class ModeMetadatas(Metadata):
         return 'other'
 
     def evaluate(self, chorale):
+        # todo add measures when in midi
         # init key analyzer
         ka = analysis.floatingKey.KeyAnalyzer(chorale)
         res = ka.run()
@@ -128,12 +129,17 @@ class KeyMetadatas(Metadata):
     # todo check if this method is correct for windowSize > 1
     def evaluate(self, chorale):
         # init key analyzer
-        ka = analysis.floatingKey.KeyAnalyzer(chorale)
+        # we must add measures by hand for the case when we are parsing midi files
+        chorale_with_measures = stream.Score()
+        for part in chorale.parts:
+            chorale_with_measures.append(part.makeMeasures())
+
+        ka = analysis.floatingKey.KeyAnalyzer(chorale_with_measures)
         ka.windowSize = self.window_size
         res = ka.run()
 
-        measure_offset_map = chorale.parts[0].measureOffsetMap()
-        length = int(chorale.duration.quarterLength * SUBDIVISION)  # in 16th notes
+        measure_offset_map = chorale_with_measures.parts[0].measureOffsetMap()
+        length = int(chorale_with_measures.duration.quarterLength * SUBDIVISION)  # in 16th notes
 
         key_signatures = np.zeros((length,))
 
