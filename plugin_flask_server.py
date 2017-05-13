@@ -208,10 +208,53 @@ def compose():
         # generate metadata:
         # todo find a way to set metadata from musescore
         # you may choose a given chorale:
-        chorale_metas = X_metadatas[50]
+        # chorale_metas = X_metadatas[50]
 
         # or just generate them
+        # -------given melody--------
+        # sequence_length = 16 * 25
         # chorale_metas = [metas.generate(sequence_length) for metas in metadatas]
+        # chorale_metas[1] = np.zeros((sequence_length, ))
+        # chorale_metas[1][16 * 4: 16 * 4 + 8] = 1
+        # chorale_metas[1][16 * 9: 16 * 9 + 8] = 1
+        # chorale_metas[1][16 * 12 + 8: 16 * 13] = 1
+        # chorale_metas[1][16 * 15 + 8: 16 * 16] = 1
+        # chorale_metas[1][16 * 20: 16 * 20 + 12] = 1
+        # chorale_metas[1][16 * 24:] = 1
+        #
+        # chorale_metas[2] = np.full((sequence_length,), metadatas[2].get_index(1))
+
+        # -------glasherry--------
+        sequence_length = 16 * 17
+        chorale_metas = [metas.generate(sequence_length) for metas in metadatas]
+        chorale_metas[1] = np.zeros((sequence_length,))
+
+        chorale_metas[1][16 * 2 + 8: 16 * 2 + 12] = 1
+        chorale_metas[1][16 * 3: 16 * 3 + 12] = 1
+        chorale_metas[1][16 * 4 + 4: 16 * 4 + 12] = 1
+        chorale_metas[1][16 * 5 + 12: 16 * 6 + 16] = 1
+        chorale_metas[1][16 * 6 + 8: 16 * 6 + 12] = 1
+        chorale_metas[1][16 * 7 + 12: 16 * 8 + 4] = 1
+        chorale_metas[1][16 * 12 + 8: 16 * 12 + 12] = 1
+
+        chorale_metas[2] = np.full((sequence_length,), metadatas[2].get_index(1))
+
+        # -------633--------
+        # sequence_length = 4 * 4 * 16
+        # chorale_metas = [metas.generate(sequence_length) for metas in metadatas]
+        # chorale_metas[1] = np.zeros((sequence_length,))
+        #
+        # chorale_metas[1][16 * 3 + 8: 16 * 3 + 12] = 1
+        # chorale_metas[1][16 * 7: 16 * 7 + 8] = 1
+        # chorale_metas[1][16 * 9 + 4: 16 * 9 + 8] = 1
+        # chorale_metas[1][16 * 11 + 4: 16 * 11 + 8] = 1
+        # chorale_metas[1][16 * 13 + 4: 16 * 13 + 8] = 1
+        # chorale_metas[1][15 * 16:] = 1
+
+        # chorale_metas[2] = np.full((sequence_length,), metadatas[2].get_index(-4))
+        # chorale_metas[2][16 * 2: 16 * 6] = metadatas[2].get_index(-3)
+        # chorale_metas[2][16 * 11:16 * 13] = metadatas[2].get_index(-3)
+
 
         # make chorale time major
         input_chorale = np.transpose(input_chorale, axes=(1, 0))
