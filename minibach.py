@@ -153,7 +153,7 @@ def generator_pianoroll(batch_size, timesteps,
 
 if __name__ == '__main__':
     batch_size = 128
-    timesteps = 16
+    timesteps = 12
     gen_train = generator_pianoroll(batch_size, timesteps=timesteps, phase='train')
     gen_test = generator_pianoroll(batch_size, timesteps=timesteps, phase='test')
 
