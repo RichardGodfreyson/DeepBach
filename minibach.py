@@ -1,9 +1,10 @@
 import pickle
 import numpy as np
 
-from data_utils import BACH_DATASET, START_SYMBOL, END_SYMBOL, to_onehot
+from data_utils import BACH_DATASET, START_SYMBOL, END_SYMBOL, to_onehot, indexed_chorale_to_score
 from keras.engine import Input, Model
 from keras.layers import Dense, Activation, Dropout
+from keras.models import load_model
 
 SOP_INDEX = 0
 
@@ -76,7 +77,7 @@ def reconstruct(features, target, num_pitches, timesteps, num_voices):
 
     assert offset == len(target)
 
-    return np.stack([sop] + other_voices, axis=-1)
+    return np.stack([sop] + other_voices, axis=0)
 
 
 def generator_pianoroll(batch_size, timesteps,
@@ -151,8 +152,8 @@ def generator_pianoroll(batch_size, timesteps,
 
 
 if __name__ == '__main__':
-    batch_size = 64
-    timesteps = 8
+    batch_size = 128
+    timesteps = 16
     gen_train = generator_pianoroll(batch_size, timesteps=timesteps, phase='train')
     gen_test = generator_pianoroll(batch_size, timesteps=timesteps, phase='test')
 
@@ -160,11 +161,40 @@ if __name__ == '__main__':
     input_size = features.shape[-1]
     output_size = target.shape[-1]
 
-    model = minibach(input_size, output_size, hidden_size=1280)
 
+    # Choose first line if model does not exist
+    # model = minibach(input_size, output_size, hidden_size=1280)
+    model = load_model('models/minibach.h5')
+
+    # Train model, comment the following lines to directly generate examples
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     model.fit_generator(generator=gen_train, steps_per_epoch=1000,
-                        epochs=10,
+                        epochs=20,
                         validation_data=gen_test,
                         validation_steps=20)
-    # model.save(filepath='models/minibach.h5')
+    model.save(filepath='models/minibach.h5')
+
+
+
+    # Generate example
+    # load dataset
+    X, X_metadatas, voice_ids, index2notes, note2indexes, metadatas = pickle.load(open(BACH_DATASET, 'rb'))
+    num_pitches = list(map(lambda x: len(x), index2notes))
+    num_voices = len(voice_ids)
+    del X, X_metadatas
+
+    # pick up one example
+    features, target = next(gen_test)
+    features = features[0]
+    target = target[0]
+
+    # show original chorale
+    reconstructed_chorale = reconstruct(features, target, num_pitches, timesteps, num_voices)
+    score = indexed_chorale_to_score(reconstructed_chorale, BACH_DATASET)
+    score.show()
+
+    # show predicted chorale
+    predictions = model.predict(np.array([features]), batch_size=1)[0]
+    reconstructed_predicted_chorale = reconstruct(features, predictions, num_pitches, timesteps, num_voices)
+    score = indexed_chorale_to_score(reconstructed_predicted_chorale, BACH_DATASET)
+    score.show()
