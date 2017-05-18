@@ -167,12 +167,12 @@ if __name__ == '__main__':
     model = load_model('models/minibach.h5')
 
     # Train model, comment the following lines to directly generate examples
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    model.fit_generator(generator=gen_train, steps_per_epoch=1000,
-                        epochs=20,
-                        validation_data=gen_test,
-                        validation_steps=20)
-    model.save(filepath='models/minibach.h5')
+    # model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    # model.fit_generator(generator=gen_train, steps_per_epoch=1000,
+    #                     epochs=20,
+    #                     validation_data=gen_test,
+    #                     validation_steps=20)
+    # model.save(filepath='models/minibach.h5')
 
 
 
