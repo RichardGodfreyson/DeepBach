@@ -11,8 +11,8 @@ SOP_INDEX = 0
 
 def minibach(input_size, output_size, hidden_size):
     features = Input((input_size,))
-    preds = Dropout(0.2)(features)
-    preds = Dense(hidden_size)(features)
+    preds = Dropout(0.2)(preds)
+    preds = Dense(hidden_size)(preds)
     preds = Activation('relu')(preds)
     preds = Dropout(0.5)(preds)
     preds = Dense(output_size)(preds)
