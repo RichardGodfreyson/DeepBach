@@ -88,6 +88,18 @@ ENV/
 # Rope project settings
 .ropeproject
 
+
+.idea/
+
 # local files
 /stats/
 /datasets/Oll.xml
+deepbach_ressources/
+models/
+old_models/
+good_model/
+generated_examples/
+datasets/
+
+*.tar.gz
+*.sh
