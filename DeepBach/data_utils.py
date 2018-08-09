@@ -149,7 +149,7 @@ def part_to_inputs(part, length, index2note, note2index):
     """
 
     list_notes = part.flat.notes
-    list_note_strings = [n.nameWithOctave for n in list_notes]
+    list_note_strings = [list_notes[i].nameWithOctave for i in range(len(list_notes))]
 
     # add entries to dictionaries if not present
     # should only be called by make_dataset when transposing

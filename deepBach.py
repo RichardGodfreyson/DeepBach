@@ -121,7 +121,8 @@ def main():
     # when reharmonization
     if args.midi_file:
         melody = converter.parse(args.midi_file)
-        melody = part_to_inputs(melody.parts[0], index2note=index2notes[0],
+        melody = part_to_inputs(melody.parts[0], length=sequence_length,
+								index2note=index2notes[0],
                                 note2index=note2indexes[0])
         num_voices = NUM_VOICES - 1
         sequence_length = len(melody)
